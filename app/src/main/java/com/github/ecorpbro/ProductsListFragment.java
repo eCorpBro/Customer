@@ -2,10 +2,10 @@ package com.github.ecorpbro;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -22,8 +22,11 @@ import java.util.List;
 public class ProductsListFragment extends Fragment {
     public static final String TAG = "ProductsListFragment";
 
-    private RecyclerView mProductsRecyclerView;
-    private ProductsAdapter mProductsAdapter;
+    private RecyclerView mRecyclerView;
+    private Button mButtonLoad;
+    private Button mButtonOrder;
+
+    private ProductsAdapter mAdapter;
     private Products mProducts;
 
     public static ProductsListFragment newInstance() {
@@ -36,23 +39,32 @@ public class ProductsListFragment extends Fragment {
 
         View view = inflater.inflate(R.layout.fragment_products_page, container, false);
 
-        mProductsRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
-        mProductsRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
+        mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+        mButtonLoad = (Button) view.findViewById(R.id.button_load);
+        mButtonOrder = (Button) view.findViewById(R.id.button_order);
 
+        final Context mContext = this.getActivity();
 
-        try {
-            mProducts = JSONReader.readProductsJSONFile(this.getActivity());
-            List<ProductItem> productItems = mProducts.getProductItemList();
-            mProductsAdapter = new ProductsAdapter(productItems);
-            mProductsRecyclerView.setAdapter(mProductsAdapter);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+        mButtonLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                try {
+                    mProducts = JSONReader.readProductsJSONFile(mContext);
+                    List<ProductItem> productItems = mProducts.getProductItemList();
+                    mAdapter = new ProductsAdapter(productItems);
+                    mRecyclerView.setAdapter(mAdapter);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
 
         return view;
     }
+
 
 //*******************************ProductsHolder********************************//
     private class ProductsHolder extends RecyclerView.ViewHolder {
