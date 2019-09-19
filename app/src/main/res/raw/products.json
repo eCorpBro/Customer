@@ -1,0 +1,25 @@
+{
+  "products": [
+    {
+      "id": 1,
+      "name": "Phone Application",
+      "quantity":"25",
+      "price": "250.45"
+    },{
+      "id": 2,
+      "name": "TV",
+      "quantity":"15",
+      "price": "1420.12"
+    },{
+      "id": 3,
+      "name": "Computer",
+      "quantity":"8",
+      "price": "2450.51"
+    },{
+      "id": 4,
+      "name": "Printer",
+      "quantity":"43",
+      "price": "120.98"
+    }
+  ]
+}
