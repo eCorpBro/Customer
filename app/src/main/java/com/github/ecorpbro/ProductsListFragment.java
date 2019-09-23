@@ -1,10 +1,8 @@
 package com.github.ecorpbro;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Parcelable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -21,14 +19,9 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.google.gson.Gson;
-
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Formatter;
 import java.util.List;
 
 public class ProductsListFragment extends Fragment {
@@ -37,7 +30,6 @@ public class ProductsListFragment extends Fragment {
     private RecyclerView mRecyclerView;
     private Button mButtonLoad;
     private Button mButtonOrder;
-
     private String mJsonString;
 
     private Products mProducts;
