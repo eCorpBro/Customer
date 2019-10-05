@@ -1,5 +1,7 @@
 package com.github.ecorpbro;
 
+import android.content.Context;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +45,7 @@ public class JSONDownloader {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public static Products jsonStringToProducts(String jsonText) throws JSONException {
+    public static Products jsonStringToProducts(String jsonText,Context context) throws JSONException {
         List<ProductItem> productItemList = new ArrayList<>();
 
         JSONObject jsonRoot = new JSONObject(jsonText);
@@ -58,12 +60,18 @@ public class JSONDownloader {
             String quantity = productJsonObject.getString("quantity");
             String price = productJsonObject.getString("price");
 
-            ProductItem productItem = new ProductItem(id,name,quantity,price);
+            ProductItem productItem = new ProductItem();
+            productItem.setId(id);
+            productItem.setName(name);
+            productItem.setQuantity(quantity);
+            productItem.setPrice(price);
+            productItem.setOrder("");
 
             productItemList.add(productItem);
         }
 
-        Products products = new Products();
+
+        Products products = Products.get(context);
         products.setProductItemList(productItemList);
 
         return products;

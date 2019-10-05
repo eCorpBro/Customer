@@ -1,8 +1,12 @@
 <resources>
     <string name="app_name">Заказчик</string>
+    <string name="button_save">Сохранить</string>
     <string name="button_load">Загрузить</string>
     <string name="button_order">Заказать</string>
     <string name="item_name">Название</string>
     <string name="item_quantity">Кол-во</string>
     <string name="item_price">Цена</string>
+    <string name="button_download">Скачать</string>
+    <string name="button_read">Читать</string>
+    <string name="button_clear">Очистить</string>
 </resources>

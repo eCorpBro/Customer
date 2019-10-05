@@ -1,6 +1,9 @@
 package com.github.ecorpbro;
 
+import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.text.Editable;
@@ -19,20 +22,29 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.github.ecorpbro.database.ProductBaseHelper;
+import com.github.ecorpbro.database.ProductCursorWrapper;
+import com.github.ecorpbro.database.ProductDbSchema;
+
 import org.json.JSONException;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 public class ProductsListFragment extends Fragment {
     public static final String TAG = "ProductsListFragment";
 
     private RecyclerView mRecyclerView;
-    private Button mButtonLoad;
+    private Button mButtonDownload;
     private Button mButtonOrder;
+    private Button mButtonSave;
+    private Button mButtonLoad;
+    private Button mButtonRead;
     private String mJsonString;
 
     private Products mProducts;
+    private Context mContext;
 
     public static ProductsListFragment newInstance() {
         return new ProductsListFragment();
@@ -42,14 +54,15 @@ public class ProductsListFragment extends Fragment {
         @Override
         protected Products doInBackground(Void... params) {
 
-            try {
-                mJsonString = new JSONDownloader().getUrlString("https://api.myjson.com/bins/nilz1");
-                mProducts = JSONDownloader.jsonStringToProducts(mJsonString);
-            } catch (IOException e) {
-                e.printStackTrace();
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+                try {
+                    mJsonString = new JSONDownloader().getUrlString("https://api.myjson.com/bins/nilz1");
+                    mContext = getActivity();
+                    mProducts = JSONDownloader.jsonStringToProducts(mJsonString,mContext);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
 
             return mProducts;
         }
@@ -64,6 +77,7 @@ public class ProductsListFragment extends Fragment {
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setRetainInstance(true);
+
     }
 
     @Nullable
@@ -72,12 +86,23 @@ public class ProductsListFragment extends Fragment {
         View view = inflater.inflate(R.layout.fragment_products_page, container, false);
         mRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
-        mButtonLoad = (Button) view.findViewById(R.id.button_load);
-        mButtonOrder = (Button) view.findViewById(R.id.button_order);
+        mButtonDownload = (Button) view.findViewById(R.id.button_download);
 
-        mButtonLoad.setOnClickListener(new View.OnClickListener() {
+        mButtonOrder = (Button) view.findViewById(R.id.button_order);
+        mButtonOrder.setEnabled(false);
+
+        mButtonSave = (Button) view.findViewById(R.id.button_save);
+        mButtonSave.setEnabled(false);
+
+        mButtonRead = (Button)view.findViewById(R.id.button_read);
+
+        mButtonLoad = (Button) view.findViewById(R.id.button_load);
+
+        mButtonDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mButtonSave.setEnabled(true);
+                mButtonOrder.setEnabled(true);
                 new JSONDownloaderTask().execute();
             }
         });
@@ -90,7 +115,6 @@ public class ProductsListFragment extends Fragment {
                         product.setOrder("0");
                     }
                 }
-                Log.d(TAG, "json = " + mProducts.toJSON());
 
                 Intent intent = new Intent(Intent.ACTION_SEND);
                 intent.setType("text/plain");
@@ -99,6 +123,33 @@ public class ProductsListFragment extends Fragment {
                 startActivity(intent);
             }
         });
+
+        mButtonSave.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mProducts != null) {
+                    mProducts.addProducts(getContext());
+                }
+            }
+        });
+
+        mButtonRead.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                readProducts();
+            }
+        });
+
+        mButtonLoad.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (mProducts != null) {
+                    mProducts = getProductsFromBase();
+                    setupAdapter();
+                }
+            }
+        });
+
         return view;
     }
 
@@ -203,6 +254,59 @@ public class ProductsListFragment extends Fragment {
             stringOrder += String.format("%-20s %5s%n", item.getName(), item.getOrder());
         }
         return stringOrder;
+    }
+
+    public Context getContext() {
+        return getActivity();
+    }
+
+    public void readProducts() {
+        ProductCursorWrapper cursorWrapper = getCursorWrapper();
+        if (cursorWrapper.moveToFirst()) {
+            do {
+                ProductItem productItem = cursorWrapper.getProduct();
+                Log.d("readDb", "_id = " + cursorWrapper.getInt(1) +
+                        ", ID = " + productItem.getId() +
+                        ", name = " + productItem.getName() +
+                        ", quantity = " + productItem.getQuantity() +
+                        ", price = " + productItem.getPrice() +
+                        ", order = " + productItem.getOrder());
+            } while (cursorWrapper.moveToNext());
+        } else
+            Log.d("readDb", "0 rows");
+        cursorWrapper.close();
+    }
+
+    public Products getProductsFromBase() {
+        ProductCursorWrapper cursorWrapper = getCursorWrapper();
+        List<ProductItem> mProductItemList = new ArrayList<>();
+        try {
+            cursorWrapper.moveToFirst();
+            while (!cursorWrapper.isAfterLast()) {
+                mProductItemList.add(cursorWrapper.getProduct());
+                cursorWrapper.moveToNext();
+            }
+        } finally {
+            cursorWrapper.close();
+        }
+        Products products = new Products();
+        products.setProductItemList(mProductItemList);
+        return products;
+    }
+
+    private ProductCursorWrapper getCursorWrapper() {
+        SQLiteDatabase db = new ProductBaseHelper(getActivity()).getWritableDatabase();
+        Cursor cursor = db.query(
+                ProductDbSchema.ProductTable.DB_TABLE_NAME,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+        );
+        ProductCursorWrapper cursorWrapper = new ProductCursorWrapper(cursor);
+        return cursorWrapper;
     }
 }
 

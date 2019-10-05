@@ -7,11 +7,8 @@ public class ProductItem {
     private String price;
     private String order;
 
-    public ProductItem(int id, String name, String quantity, String price) {
-        this.id = id;
-        this.name = name;
-        this.quantity = quantity;
-        this.price = price;
+    public ProductItem() {
+
     }
 
     public int getId() {
