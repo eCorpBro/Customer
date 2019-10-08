@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Заказчик</string>
+    <string name="app_name">Customer</string>
     <string name="button_save">Сохранить</string>
     <string name="button_load">Загрузить</string>
     <string name="button_order">Заказать</string>
