@@ -12,12 +12,19 @@ public class ProductCursorWrapper extends CursorWrapper {
         super(cursor);
     }
 
-    public ProductItem getProduct() {
-        int id = Integer.parseInt(getString(getColumnIndex(ProductTable.Cols.ID)));
-        String name = getString(getColumnIndex(ProductTable.Cols.NAME));
-        String quantity = getString(getColumnIndex(ProductTable.Cols.QUANTITY));
-        String price = getString(getColumnIndex(ProductTable.Cols.PRICE));
-        String order = getString(getColumnIndex(ProductTable.Cols.ORDER_PRODUCTS));
+    public ProductItem getProductItem() {
+        int idIndex = this.getColumnIndex(ProductTable.Cols.ID);
+        int nameIndex = this.getColumnIndex(ProductTable.Cols.NAME);
+        int quantityIndex = this.getColumnIndex(ProductTable.Cols.QUANTITY);
+        int priceIndex = this.getColumnIndex(ProductTable.Cols.PRICE);
+        int order_productsIndex = this.getColumnIndex(ProductTable.Cols.ORDER_PRODUCTS);
+
+
+        int id = this.getInt(idIndex);
+        String name = this.getString(nameIndex);
+        String quantity = this.getString(quantityIndex);
+        String price = this.getString(priceIndex);
+        String order = this.getString(order_productsIndex);
 
         ProductItem productItem = new ProductItem();
         productItem.setId(id);

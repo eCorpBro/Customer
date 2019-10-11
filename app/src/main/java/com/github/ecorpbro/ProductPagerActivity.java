@@ -14,8 +14,11 @@ import androidx.viewpager.widget.ViewPager;
 
 import java.util.List;
 
+import static androidx.fragment.app.FragmentStatePagerAdapter.BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT;
+
 public class ProductPagerActivity extends AppCompatActivity {
-    private static final String EXTRA_PRODUCT_ID = "product_id";
+
+    private static final String EXTRA_PRODUCT_ID = "com.github.ecorpbro.product_id";
 
     private ViewPager mViewPager;
     private List<ProductItem> mProductItems;
@@ -37,7 +40,7 @@ public class ProductPagerActivity extends AppCompatActivity {
 
         mProductItems = Products.get(this).getProductItemList();
         FragmentManager fragmentManager = getSupportFragmentManager();
-        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager) {
+        mViewPager.setAdapter(new FragmentStatePagerAdapter(fragmentManager,BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
             @NonNull
             @Override
             public Fragment getItem(int position) {
@@ -47,7 +50,7 @@ public class ProductPagerActivity extends AppCompatActivity {
 
             @Override
             public int getCount() {
-                return 0;
+                return mProductItems.size();
             }
         });
 

@@ -1,14 +1,13 @@
 package com.github.ecorpbro;
 
 import android.os.Bundle;
-import android.util.Log;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 
+
 public abstract class SingleFragmentActivity extends AppCompatActivity {
-    public static final String TAG = "SingleFragmentActivity";
 
     protected abstract Fragment createFragment();
 
@@ -19,15 +18,10 @@ public abstract class SingleFragmentActivity extends AppCompatActivity {
 
         FragmentManager fragmentManager = getSupportFragmentManager();
         Fragment fragment = fragmentManager.findFragmentById(R.id.fragment_container);
-        Log.d(TAG, "onCreate");
 
         if(fragment == null){
             fragment = createFragment();
             fragmentManager.beginTransaction().add(R.id.fragment_container,fragment).commit();
         }
     }
-
-//    public void readProducts(View view) {
-//
-//    }
 }

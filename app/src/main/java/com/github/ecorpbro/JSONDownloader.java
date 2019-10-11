@@ -70,7 +70,6 @@ public class JSONDownloader {
             productItemList.add(productItem);
         }
 
-
         Products products = Products.get(context);
         products.setProductItemList(productItemList);
 

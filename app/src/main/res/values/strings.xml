@@ -6,7 +6,7 @@
     <string name="item_name">Название</string>
     <string name="item_quantity">Кол-во</string>
     <string name="item_price">Цена</string>
-    <string name="button_download">Скачать</string>
-    <string name="button_read">Читать</string>
+    <string name="button_download">Скачать/Обновить</string>
     <string name="button_clear">Очистить</string>
+    <string name="item_order">Заказано</string>
 </resources>
