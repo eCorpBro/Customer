@@ -2,6 +2,9 @@ package com.github.ecorpbro;
 
 import android.content.Context;
 
+import com.github.ecorpbro.products.ProductItem;
+import com.github.ecorpbro.products.Products;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,7 +48,7 @@ public class JSONDownloader {
         return new String(getUrlBytes(urlSpec));
     }
 
-    public static Products jsonStringToProducts(String jsonText,Context context) throws JSONException {
+    public static Products jsonStringToProducts(String jsonText, Context context) throws JSONException {
         List<ProductItem> productItemList = new ArrayList<>();
 
         JSONObject jsonRoot = new JSONObject(jsonText);
@@ -55,13 +58,11 @@ public class JSONDownloader {
         for (int i = 0; i < jsonArray.length();i++) {
             JSONObject productJsonObject = jsonArray.getJSONObject(i);
 
-            int id = productJsonObject.getInt("id");
             String name = productJsonObject.getString("name");
             String quantity = productJsonObject.getString("quantity");
             String price = productJsonObject.getString("price");
 
             ProductItem productItem = new ProductItem();
-            productItem.setId(id);
             productItem.setName(name);
             productItem.setQuantity(quantity);
             productItem.setPrice(price);

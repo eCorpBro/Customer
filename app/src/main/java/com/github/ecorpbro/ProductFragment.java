@@ -10,6 +10,11 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.github.ecorpbro.products.ProductItem;
+import com.github.ecorpbro.products.Products;
+
+import java.util.UUID;
+
 public class ProductFragment extends Fragment {
     private static final String ARG_PRODUCT_ID = "com.github.ecorpbro.product_id";
 
@@ -21,9 +26,9 @@ public class ProductFragment extends Fragment {
     private TextView mOrder;
 
 
-    public static ProductFragment newInstance(int productId) {
+    public static ProductFragment newInstance(UUID productId) {
         Bundle args = new Bundle();
-        args.putInt(ARG_PRODUCT_ID,productId);
+        args.putSerializable(ARG_PRODUCT_ID,productId);
         ProductFragment productFragment = new ProductFragment();
         productFragment.setArguments(args);
         return productFragment;
@@ -32,7 +37,7 @@ public class ProductFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        int   productId = (int)getArguments().getInt(ARG_PRODUCT_ID);
+        UUID   productId = (UUID) getArguments().getSerializable(ARG_PRODUCT_ID);
         mProductItem = Products.get(getActivity()).getProductItem(productId);
     }
 
@@ -51,7 +56,9 @@ public class ProductFragment extends Fragment {
         mPrice.setText(mProductItem.getPrice());
 
         mOrder = (TextView) v.findViewById(R.id.productItem_order);
-        mOrder.setText(mProductItem.getOrder());
+        if (mProductItem.getOrder().equals("")) {
+            mOrder.setText("0");
+        } else mOrder.setText(mProductItem.getOrder());
 
         return v;
     }

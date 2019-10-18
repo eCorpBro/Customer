@@ -1,4 +1,4 @@
-package com.github.ecorpbro;
+package com.github.ecorpbro.products;
 
 import android.content.ContentValues;
 import android.content.Context;
@@ -13,6 +13,7 @@ import com.github.ecorpbro.database.ProductDbSchema.ProductTable;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class Products implements Parcelable {
 
@@ -59,7 +60,7 @@ public class Products implements Parcelable {
         mProductItemList = productItemList;
     }
 
-    public void setProductItemListFromBase() {
+    public void setProductItemListToBase() {
         List<ProductItem> productItems = new ArrayList<>();
         ProductCursorWrapper cursor = queryProducts(null, null);
         try {
@@ -75,7 +76,7 @@ public class Products implements Parcelable {
     }
 
 
-        public ProductItem getProductItem(int id) {
+        public ProductItem getProductItem(UUID id) {
         ProductItem productItem = new ProductItem();
         for (ProductItem product : mProducts.getProductItemList()) {
             if (product.getId() == id) {
@@ -90,7 +91,7 @@ public class Products implements Parcelable {
         ContentValues values = getContentValues(productItem);
         mDatabase.update(ProductTable.DB_TABLE_NAME,
                 values,
-                ProductTable.Cols.ID + " = ?",
+                ProductTable.Cols.UUID + " = ?",
                 new  String[]{id});
 
     }
@@ -110,7 +111,7 @@ public class Products implements Parcelable {
 
     private static ContentValues getContentValues(ProductItem productItem) {
         ContentValues values = new ContentValues();
-        values.put(ProductTable.Cols.ID, productItem.getId());
+        values.put(ProductTable.Cols.UUID, productItem.getId().toString());
         values.put(ProductTable.Cols.NAME, productItem.getName());
         values.put(ProductTable.Cols.QUANTITY, productItem.getQuantity());
         values.put(ProductTable.Cols.PRICE, productItem.getPrice());

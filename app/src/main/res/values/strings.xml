@@ -1,12 +1,21 @@
 <resources>
     <string name="app_name">Customer</string>
-    <string name="button_save">Сохранить</string>
-    <string name="button_load">Загрузить</string>
-    <string name="button_order">Заказать</string>
-    <string name="item_name">Название</string>
-    <string name="item_quantity">Кол-во</string>
-    <string name="item_price">Цена</string>
-    <string name="button_download">Скачать/Обновить</string>
-    <string name="button_clear">Очистить</string>
+    <string name="save">Сохранить</string>
+    <string name="load">Загрузить</string>
+    <string name="order">Заказать</string>
+    <string name="name">Название</string>
+    <string name="quantity">Кол-во</string>
+    <string name="price">Цена</string>
+    <string name="btn_download">Скачать/Обновить</string>
+    <string name="btn_clear">Очистить</string>
     <string name="item_order">Заказано</string>
+    <string name="settings">Настройки</string>
+    <string name="btn_add">Добавить</string>
+    <string name="btn_delete">Удалить</string>
+    <string name="source_name">Название источника данных</string>
+    <string name="source_url">URL источника данных</string>
+    <string name="btn_cancel">Отменить</string>
+    <string name="btn_update">Обновить</string>
+    <string name="warning_nounique">Источник данных не добавлен. Имя и адрес должны быть уникальными!!!</string>
+    <string name="label_sourcedata">Источник данных:</string>
 </resources>

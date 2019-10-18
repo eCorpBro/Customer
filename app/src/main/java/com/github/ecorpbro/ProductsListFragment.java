@@ -7,11 +7,16 @@ import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -20,6 +25,10 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.github.ecorpbro.database.ProductBaseManager;
+import com.github.ecorpbro.database.SettingsBaseManager;
+import com.github.ecorpbro.products.ProductItem;
+import com.github.ecorpbro.products.Products;
+import com.github.ecorpbro.settings.SettingsActivity;
 
 import org.json.JSONException;
 
@@ -27,15 +36,19 @@ import java.io.IOException;
 import java.util.List;
 
 public class ProductsListFragment extends Fragment {
+    public static final String TAG = "ProductsListFragment";
 
     private RecyclerView mRecyclerView;
     private ProductsAdapter mProductsAdapter;
+    private Toast mToast;
+    private boolean isToastNoUrl = false;
 
     private Button mBtnDownload;
     private Button mBtnOrder;
     private Button mBtnSave;
     private Button mBtnLoad;
     private Button mBtnClear;
+    private ProgressBar mProgressBar;
 
     private Products mProducts;
 
@@ -48,7 +61,12 @@ public class ProductsListFragment extends Fragment {
         protected Products doInBackground(Void... params) {
 
             try {
-                String jsonString = new JSONDownloader().getUrlString("https://api.myjson.com/bins/1em0xx");
+                String url = SettingsBaseManager.get(getActivity()).getDefUrl();
+                if (url == SettingsBaseManager.NOSORUCE) {
+                    isToastNoUrl = true;
+                    return null;
+                }
+                String jsonString = new JSONDownloader().getUrlString(url);
                 mProducts = JSONDownloader.jsonStringToProducts(jsonString, getContext());
                 mProducts.addProducts(getContext());
             } catch (IOException e) {
@@ -69,6 +87,7 @@ public class ProductsListFragment extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setHasOptionsMenu(true);
         setRetainInstance(true);
     }
 
@@ -79,6 +98,8 @@ public class ProductsListFragment extends Fragment {
 
         mRecyclerView = (RecyclerView) view.findViewById(R.id.products_recycler_view);
         mRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
+
+        mProgressBar = (ProgressBar) view.findViewById(R.id.progressBar);
 
         mBtnDownload = (Button) view.findViewById(R.id.button_download);
 
@@ -93,7 +114,9 @@ public class ProductsListFragment extends Fragment {
         mBtnDownload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                mProgressBar.setVisibility(ProgressBar.VISIBLE);
                 new JSONDownloaderTask().execute();
+
             }
         });
 
@@ -127,7 +150,9 @@ public class ProductsListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mProducts = new ProductBaseManager(getActivity()).getProductsFromBase();
-                setupAdapter();
+                if (mProducts != null) {
+                    setupAdapter();
+                }
             }
         });
 
@@ -161,6 +186,28 @@ public class ProductsListFragment extends Fragment {
         if (mProducts != null) {
             setupAdapter();
         }
+    }
+
+
+    @Override
+    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.fragment_product_list,menu);
+
+        MenuItem settingItem = menu.findItem(R.id.txtDefName);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.txtDefName:
+                Intent intent = new Intent(getActivity(), SettingsActivity.class);
+                startActivity(intent);
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+
     }
 
     //*******************************ProductsHolder********************************//
@@ -250,10 +297,16 @@ public class ProductsListFragment extends Fragment {
     //*******************************UserMetods********************************//
     private void setupAdapter() {
         if (isAdded()) {
+            if (isToastNoUrl) {
+                mToast = Toast.makeText(getActivity(),"Установите в настройках адрес источника данных!", Toast.LENGTH_LONG);
+                mToast.setGravity(1,1,1);
+                mToast.show();
+            }
             if (mProducts == null) {
                 mProducts = Products.get(getActivity());
-                mProducts.setProductItemListFromBase();
+                mProducts.setProductItemListToBase();
             }
+            mProgressBar.setVisibility(ProgressBar.INVISIBLE);
             List<ProductItem> productItemList = mProducts.getProductItemList();
             mProductsAdapter = new ProductsAdapter(productItemList);
             mRecyclerView.setAdapter(mProductsAdapter);

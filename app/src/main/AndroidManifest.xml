@@ -12,8 +12,10 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
+        <activity android:name=".settings.SettingsActivity"
+                  android:parentActivityName=".ProductsListActivity"></activity>
         <activity android:name=".ProductPagerActivity"
-            android:parentActivityName=".ProductsListActivity"></activity>
+                  android:parentActivityName=".ProductsListActivity"></activity>
         <activity android:name=".ProductsListActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

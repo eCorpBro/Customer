@@ -1,22 +1,26 @@
-package com.github.ecorpbro;
+package com.github.ecorpbro.products;
+
+import java.util.Date;
+import java.util.UUID;
 
 public class ProductItem {
-    private int id;
+    private UUID id; //id товара
     private String name;
     private String quantity;
     private String price;
     private String order;
 
     public ProductItem() {
-
+        this(UUID.randomUUID());
     }
 
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
+    public ProductItem(UUID id) {
         this.id = id;
+    }
+
+
+    public UUID getId() {
+        return id;
     }
 
     public String getName() {

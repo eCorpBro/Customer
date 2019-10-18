@@ -10,6 +10,7 @@ public class ProductBaseHelper extends SQLiteOpenHelper {
     private static final int VERSION = 1;
     private static final String DATABASE_NAME = "productBase.db";
 
+
     public ProductBaseHelper(Context context) {
         super(context,DATABASE_NAME,null,VERSION);
     }
@@ -18,7 +19,7 @@ public class ProductBaseHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("CREATE TABLE " + ProductTable.DB_TABLE_NAME + "(" +
                 " _id INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                ProductTable.Cols.ID + ", " +
+                ProductTable.Cols.UUID + ", " +
                 ProductTable.Cols.NAME + ", " +
                 ProductTable.Cols.QUANTITY + ", " +
                 ProductTable.Cols.PRICE + ", " +
